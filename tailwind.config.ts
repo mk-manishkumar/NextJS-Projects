@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
 import type { Config } from "tailwindcss";
 
-import svgToDataUri from "mini-svg-data-uri";
-
-import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette";
-
+const svgToDataUri = require("mini-svg-data-uri");
+const colors = require("tailwindcss/colors");
+const {
+  default: flattenColorPalette,
+} = require("tailwindcss/lib/util/flattenColorPalette");
 
 // Plugin to add each Tailwind color as a global CSS variable
 function addVariablesForColors({ addBase, theme }: any) {
