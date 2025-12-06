@@ -11,17 +11,17 @@ export const POST = async(request:NextRequest) => {
 
         const existUser = await User.findOne({email})
         if(existUser){
-            return NextResponse.json(
-                {message:"User already exist!"},
-                {status:400}
-            )
+          return NextResponse.json(
+            {message:"User already exist!"},
+            {status:400}
+          )
         }
 
         if(password.length<4){
-              return NextResponse.json(
-                {message:"Password must be at least 4 characters!"},
-                {status:400}
-            )
+          return NextResponse.json(
+            {message:"Password must be at least 4 characters!"},
+            {status:400}
+          )
         }
 
        const hashedPassword = await bcrypt.hash(password,10)
@@ -29,16 +29,13 @@ export const POST = async(request:NextRequest) => {
         name,email,password:hashedPassword
        })
 
-           return NextResponse.json(
-                user,
-                {status:201}
-            )
+       return NextResponse.json(user,{status:201})
 
     } catch (error) {
-            return NextResponse.json(
-                {message:`register error ${error}`},
-                {status:500}
-            )
+        return NextResponse.json(
+          {message:`register error ${error}`},
+          {status:500}
+        )
     }
 }
 
