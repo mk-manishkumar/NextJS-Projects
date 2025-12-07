@@ -53,7 +53,7 @@ const Register = () => {
             </Link>
           </p>
 
-          <button className="w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors">Register</button>
+          <button className="w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors cursor-pointer">Register</button>
         </form>
 
         <div className="flex items-center gap-[5px] justify-center my-5">
@@ -63,7 +63,7 @@ const Register = () => {
         </div>
 
         <button
-          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-400 rounded-lg bg-white text-black hover:bg-gray-100 transition-colors"
+          className="w-full cursor-pointer flex items-center justify-center gap-2 py-2 px-4 border border-gray-400 rounded-lg bg-white text-black hover:bg-gray-100 transition-colors"
           onClick={async () => {
             await signIn("google", {
               callbackUrl: "/",

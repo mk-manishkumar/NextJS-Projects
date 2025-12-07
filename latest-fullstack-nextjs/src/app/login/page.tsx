@@ -40,12 +40,12 @@ const Login = () => {
 
           <p className="text-sm text-center mt-1">
             Want To Create an account?{" "}
-            <Link href="/register" className="text-blue-400 hover:underline">
+            <Link href="/register" className="text-blue-400 hover:underline cursor-pointer">
               Register
             </Link>
           </p>
 
-          <button className="w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors">Login</button>
+          <button className="w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors cursor-pointer">Login</button>
         </form>
 
         <div className="flex items-center gap-[5px] justify-center my-5">
@@ -55,7 +55,7 @@ const Login = () => {
         </div>
 
         <button
-          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-400 rounded-lg bg-white text-black hover:bg-gray-100 transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-gray-400 rounded-lg bg-white text-black hover:bg-gray-100 transition-colors cursor-pointer"
           onClick={async () => {
             await signIn("google", {
               callbackUrl: "/",

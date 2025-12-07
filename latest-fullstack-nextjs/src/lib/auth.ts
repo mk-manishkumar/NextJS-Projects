@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import connectDb from './db';
 import User from '@/model/User.model';
 import bcrypt from 'bcryptjs';
+import Google from 'next-auth/providers/google';
 
 const authOptions:NextAuthOptions={
   providers:[
@@ -34,12 +35,36 @@ const authOptions:NextAuthOptions={
           image: user.image,
         };      
       },
+    }),
 
+    // Google login
+     Google({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
 
-    })
   ],
 
   callbacks:{
+    async signIn({ account, user }) {
+      if (account?.provider === "google") {
+        await connectDb();
+
+        let existUser = await User.findOne({ email: user?.email });
+
+        if (!existUser) {
+          existUser = await User.create({
+            name: user.name,
+            email: user?.email,
+          });
+        }
+
+        user.id = existUser._id as string;
+      }
+
+      return true;
+    },
+
     async jwt({token,user}){
       if (user) {
         token.id=user.id;
