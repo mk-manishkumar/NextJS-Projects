@@ -6,7 +6,7 @@ import { Router } from "next/router";
 import { useState } from "react";
 import { HiPencil } from "react-icons/hi";
 
-const page = () => {
+const Page = () => {
   const { data } = useSession();
   const [loading, setLoading] = useState(false);
 
@@ -46,4 +46,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
