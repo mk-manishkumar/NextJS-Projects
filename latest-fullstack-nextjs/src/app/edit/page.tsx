@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 
-
 const Page = () => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
@@ -24,31 +23,28 @@ const Page = () => {
     setFrontendImage(URL.createObjectURL(file));
   };
 
-   const handleSubmit = async (e: React.FormEvent) => {
-     e.preventDefault();
-     setLoading(true);
-     try {
-       const formData = new FormData();
-       formData.append("name", name);
-       if (backendImage) {
-         formData.append("file", backendImage);
-       }
-       const result = await axios.post("/api/edit", formData);
-       setLoading(false);
-       data?.setUser(result.data);
-     } catch (error) {
-       console.log(error);
-       setLoading(false);
-     }
-   };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      if (backendImage) formData.append("file", backendImage);
+      const result = await axios.post("/api/edit", formData);
+      setLoading(false);
+      data?.setUser(result.data);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
 
-   useEffect(() => {
-     if (data) {
-       setName(data?.user?.name as string);
-       setFrontendImage(data.user?.image as string);
-     }
-   }, [data]);
-   
+  useEffect(() => {
+    if (data) {
+      setName(data?.user?.name as string);
+      setFrontendImage(data.user?.image as string);
+    }
+  }, [data]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-4 ">
@@ -61,7 +57,9 @@ const Page = () => {
             {frontendImage ? <Image src={frontendImage} fill alt="image" /> : <CgProfile size={22} color="white" />}
           </button>
           <div className="w-full ">
-            <label htmlFor="name" className="block mb-1 font-medium">Name</label>
+            <label htmlFor="name" className="block mb-1 font-medium">
+              Name
+            </label>
             <input type="text" placeholder="Enter Name" className="w-full border-b border-white py-2 px-1 bg-black text-white outline-none placeholder-gray-400" onChange={(e) => setName(e.target.value)} value={name} />
           </div>
           <button className="w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors" disabled={loading}>
@@ -71,6 +69,6 @@ const Page = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Page
+export default Page;

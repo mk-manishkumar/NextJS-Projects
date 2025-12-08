@@ -30,9 +30,9 @@ export const POST = async (req: NextRequest) => {
       { new: true }
     );
 
-    if (!user) return NextResponse.json({ message: "user not found" }, { status: 400 });
+    if (!user) return NextResponse.json({ message: "User not found" }, { status: 400 });
     return NextResponse.json(user, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: `edit error ${error}` }, { status: 500 });
+    return NextResponse.json({ message: `Edit Error ${error}` }, { status: 500 });
   }
 };
