@@ -1,19 +1,19 @@
 "use client";
 
+import { userDataContext } from "@/context/UserContext";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 
 const Page = () => {
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState("");
-  const [frontendImage, setFrontendImage] = useState("");
+  const data = useContext(userDataContext);
+
+  const [name, setName] = useState(data?.user?.name || "");
+  const [frontendImage, setFrontendImage] = useState(data?.user?.image || "");
   const [backendImage, setBackendImage] = useState<File>();
   const imageInput = useRef<HTMLInputElement>(null);
-
-  const data = useSession();
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -38,13 +38,6 @@ const Page = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (data) {
-      setName(data?.user?.name as string);
-      setFrontendImage(data.user?.image as string);
-    }
-  }, [data]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black text-white px-4 ">
