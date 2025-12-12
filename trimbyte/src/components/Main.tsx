@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
 
 const Main = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <>
       <div>
@@ -11,8 +17,8 @@ const Main = () => {
 
       {/* Card */}
       <div className="bg-white mx-auto p-10 mb-8 rounded-3xl w-full lg:w-1/2 h-auto shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
-        {/* Input and Button Row */}
-        <div className="flex flex-col sm:flex-row gap-3.5 mb-8">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3.5 mb-8">
           {/* URL Input Field */}
           <input
             type="text"
@@ -23,6 +29,7 @@ const Main = () => {
 
           {/* Shorten Button */}
           <button
+            aria-label="Copy shortened URL"
             className="w-fit mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
             cursor-pointer transition-transform duration-300 
             bg-linear-to-br from-[#667eea] to-[#764ba2]
@@ -30,10 +37,10 @@ const Main = () => {
           >
             Shorten
           </button>
-        </div>
+        </form>
 
         {/* Result Box */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-between items-center rounded-xl mb-8 p-6 bg-linear-to-br from-[#f5f7fa] to-[#c3cfe2]">
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-center rounded-xl mb-8 p-6 bg-linear-to-br from-[#f5f7fa] to-[#c3cfe2]" role="status" aria-live="polite">
           {/* Shortened URL Text */}
           <div className="flex flex-col sm:flex-row gap-3 items-center">
             <p className="text-gray-500">Your shortened URL:</p>
@@ -49,6 +56,18 @@ const Main = () => {
               📋 Copy
             </button>
           </div>
+        </div>
+
+        {/* Save Link Button */}
+        <div className="mx-auto">
+          <button
+            className="w-full mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
+            cursor-pointer transition-transform duration-300 
+            bg-linear-to-br from-[#667eea] to-[#764ba2]
+            hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)]"
+          >
+            Save Link
+          </button>
         </div>
       </div>
 
