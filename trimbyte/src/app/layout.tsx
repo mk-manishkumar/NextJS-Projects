@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={"bg-linear-to-br from-[#667eea] to-[#764ba2] min-h-screen flex flex-col"}>
         <Navbar />
-        <main className="flex-1 flex flex-col">{children}</main>
+        <main className="flex-1 flex flex-col px-5">{children}</main>
         <Footer />
       </body>
     </html>
