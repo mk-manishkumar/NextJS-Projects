@@ -1,11 +1,7 @@
-
+import Main from "@/components/Main"
 
 const page = () => {
-  return (
-    <div>
-      
-    </div>
-  )
+  return <Main/>
 }
 
 export default page
