@@ -10,13 +10,24 @@ const Main = () => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!originalUrl.trim()) return;
     try {
-      e.preventDefault();
-      const res = await axios.post("http://localhost:3000/api/shortener", {
-        url: originalUrl,
-      });
+      const res = await axios.post("/api/shortener", { url: originalUrl });
       const shortUrl = res.data.shortUrl;
       setShortenUrl(shortUrl);
+      setOriginalUrl("");
+    } catch (error) {
+      if (process.env.NODE_ENV === "development") console.error(error);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!shortenUrl) return;
+    try {
+      await navigator.clipboard.writeText(shortenUrl);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error(error);
     }
@@ -45,7 +56,7 @@ const Main = () => {
 
           {/* Shorten Button */}
           <button
-            aria-label="Copy shortened URL"
+            aria-label="Shorten URL"
             className="w-fit mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
             cursor-pointer transition-transform duration-300 
             bg-linear-to-br from-[#667eea] to-[#764ba2]
@@ -66,10 +77,12 @@ const Main = () => {
           {/* Copy Button */}
           <div>
             <button
+              aria-label="Copy shortened URL"
               className="px-6 py-2 bg-[#667eea] text-white font-semibold rounded-lg 
               transition-colors duration-300 hover:bg-[#5568d3] cursor-pointer"
+              onClick={handleCopy}
             >
-              📋 Copy
+              {isCopied ? "Copied!" : "📋Copy"}
             </button>
           </div>
         </div>
