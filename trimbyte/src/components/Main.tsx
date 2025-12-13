@@ -1,11 +1,25 @@
 "use client";
 
+import axios from "axios";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 const Main = () => {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const [originalUrl, setOriginalUrl] = useState("");
+  const [shortenUrl, setShortenUrl] = useState("");
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+      const res = await axios.post("http://localhost:3000/api/shortener", {
+        url: originalUrl,
+      });
+      const shortUrl = res.data.shortUrl;
+      setShortenUrl(shortUrl);
+    } catch (error) {
+      if (process.env.NODE_ENV === "development") console.error(error);
+    }
   };
 
   return (
@@ -25,6 +39,8 @@ const Main = () => {
             className="flex-1 px-[25px] py-[18px] border-2 border-[#e0e0e0] rounded-xl text-[16px] 
             transition-all duration-300 
             focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)]"
+            value={originalUrl}
+            onChange={(e) => setOriginalUrl(e.target.value)}
           />
 
           {/* Shorten Button */}
@@ -44,7 +60,7 @@ const Main = () => {
           {/* Shortened URL Text */}
           <div className="flex flex-col sm:flex-row gap-3 items-center">
             <p className="text-gray-500">Your shortened URL:</p>
-            <span className="text-[#667eea] font-bold ml-3">url value</span>
+            <span className="text-[#667eea] font-bold ml-3">{shortenUrl}</span>
           </div>
 
           {/* Copy Button */}
