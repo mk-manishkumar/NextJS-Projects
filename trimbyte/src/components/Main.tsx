@@ -11,6 +11,7 @@ const Main = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setShortenUrl("");
     if (!originalUrl.trim()) return;
     try {
       const res = await axios.post("/api/shortener", { url: originalUrl });
@@ -57,6 +58,7 @@ const Main = () => {
           {/* Shorten Button */}
           <button
             aria-label="Shorten URL"
+            type="submit"
             className="w-fit mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
             cursor-pointer transition-transform duration-300 
             bg-linear-to-br from-[#667eea] to-[#764ba2]
@@ -66,38 +68,43 @@ const Main = () => {
           </button>
         </form>
 
-        {/* Result Box */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-between items-center rounded-xl mb-8 p-6 bg-linear-to-br from-[#f5f7fa] to-[#c3cfe2]" role="status" aria-live="polite">
-          {/* Shortened URL Text */}
-          <div className="flex flex-col sm:flex-row gap-3 items-center">
-            <p className="text-gray-500">Your shortened URL:</p>
-            <span className="text-[#667eea] font-bold ml-3">{shortenUrl}</span>
-          </div>
+        {/* MERGED RESULT + SAVE BLOCK */}
+        {shortenUrl && (
+          <>
+            {/* Result Box */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-between items-center rounded-xl mb-8 p-6 bg-linear-to-br from-[#f5f7fa] to-[#c3cfe2]" role="status" aria-live="polite">
+              {/* Shortened URL Text */}
+              <div className="flex flex-col sm:flex-row gap-3 items-center">
+                <p className="text-gray-500">Your shortened URL:</p>
+                <span className="text-[#667eea] font-bold ml-3">{shortenUrl}</span>
+              </div>
 
-          {/* Copy Button */}
-          <div>
-            <button
-              aria-label="Copy shortened URL"
-              className="px-6 py-2 bg-[#667eea] text-white font-semibold rounded-lg 
-              transition-colors duration-300 hover:bg-[#5568d3] cursor-pointer"
-              onClick={handleCopy}
-            >
-              {isCopied ? "Copied!" : "📋Copy"}
-            </button>
-          </div>
-        </div>
+              {/* Copy Button */}
+              <div>
+                <button
+                  aria-label="Copy shortened URL"
+                  className="px-6 py-2 bg-[#667eea] text-white font-semibold rounded-lg 
+                  transition-colors duration-300 hover:bg-[#5568d3] cursor-pointer"
+                  onClick={handleCopy}
+                >
+                  {isCopied ? "Copied!" : "📋Copy"}
+                </button>
+              </div>
+            </div>
 
-        {/* Save Link Button */}
-        <div className="mx-auto">
-          <button
-            className="w-full mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
-            cursor-pointer transition-transform duration-300 
-            bg-linear-to-br from-[#667eea] to-[#764ba2]
-            hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)]"
-          >
-            Save Link
-          </button>
-        </div>
+            {/* Save Link Button */}
+            <div className="mx-auto">
+              <button
+                className="w-full mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
+                cursor-pointer transition-transform duration-300 
+                bg-linear-to-br from-[#667eea] to-[#764ba2]
+                hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)]"
+              >
+                Save Link
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Navigation Buttons Below the Card */}
