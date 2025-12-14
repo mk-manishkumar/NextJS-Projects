@@ -1,6 +1,6 @@
 "use client";
 
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,34 +8,52 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 const Main = () => {
-  const [originalUrl, setOriginalUrl] = useState("");
-  const [shortenUrl, setShortenUrl] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
+  const [originalUrl, setOriginalUrl] = useState<string>("");
+  const [shortenUrl, setShortenUrl] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const { data: session } = useSession();
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setShortenUrl("");
+    setShortenUrl(null);
+
     if (!originalUrl.trim()) return;
+
     try {
       const res = await axios.post("/api/shortener", { url: originalUrl });
-      const shortUrl = res.data.shortUrl;
+      const shortUrl: string = res.data.shortUrl;
+
       setShortenUrl(shortUrl);
       setOriginalUrl("");
-    } catch (error) {
+    } catch (error: unknown) {
+      let message = "Something went wrong";
+
+      if (error instanceof AxiosError) {
+        message = error.response?.data?.message || error.message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+
+      toast.error(message);
+
       if (process.env.NODE_ENV === "development") console.error(error);
     }
   };
 
   const handleCopy = async () => {
     if (!shortenUrl) return;
+
     try {
       await navigator.clipboard.writeText(shortenUrl);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to copy";
+
+      toast.error(message);
+
       if (process.env.NODE_ENV === "development") console.error(error);
     }
   };
@@ -49,12 +67,13 @@ const Main = () => {
   };
 
   const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const targetHref = e.currentTarget.getAttribute("href");
+    e.preventDefault();
+
     if (!session) {
-      e.preventDefault();
       toast.error("You must be logged in to access this feature!");
-      
-      const targetHref = e.currentTarget.getAttribute("href");
-      router.push(`/login?redirect=${targetHref}`);
+    } else {
+      if (targetHref) router.push(targetHref);
     }
   };
 
@@ -92,7 +111,7 @@ const Main = () => {
           </button>
         </form>
 
-        {shortenUrl && (
+        {shortenUrl !== null && (
           <>
             {/* Result Box */}
             <div className="flex flex-col sm:flex-row gap-3 justify-between items-center rounded-xl mb-8 p-6 bg-linear-to-br from-[#f5f7fa] to-[#c3cfe2]" role="status" aria-live="polite">
