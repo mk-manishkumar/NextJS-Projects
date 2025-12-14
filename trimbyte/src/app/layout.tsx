@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Providers from "@/components/Providers";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "TrimByte",
@@ -20,6 +21,16 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <main className="flex-1 flex flex-col px-5">{children}</main>
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              style: {
+                background: "#363636",
+                color: "#fff",
+                fontSize: "1.5rem",
+              },
+            }}
+          />
           <Footer />
         </Providers>
       </body>

@@ -1,13 +1,19 @@
 "use client";
 
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 const Main = () => {
   const [originalUrl, setOriginalUrl] = useState("");
   const [shortenUrl, setShortenUrl] = useState("");
   const [isCopied, setIsCopied] = useState(false);
+
+  const { data: session } = useSession();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +37,24 @@ const Main = () => {
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error(error);
+    }
+  };
+
+  const handleSaveLink = async () => {
+    if (!session) {
+      toast("Login to Save Link");
+    } else {
+      // for future
+    }
+  };
+
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!session) {
+      e.preventDefault();
+      toast.error("You must be logged in to access this feature!");
+      
+      const targetHref = e.currentTarget.getAttribute("href");
+      router.push(`/login?redirect=${targetHref}`);
     }
   };
 
@@ -68,7 +92,6 @@ const Main = () => {
           </button>
         </form>
 
-        {/* MERGED RESULT + SAVE BLOCK */}
         {shortenUrl && (
           <>
             {/* Result Box */}
@@ -95,6 +118,7 @@ const Main = () => {
             {/* Save Link Button */}
             <div className="mx-auto">
               <button
+                onClick={handleSaveLink}
                 className="w-full mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
                 cursor-pointer transition-transform duration-300 
                 bg-linear-to-br from-[#667eea] to-[#764ba2]
@@ -109,11 +133,11 @@ const Main = () => {
 
       {/* Navigation Buttons Below the Card */}
       <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mt-6">
-        <Link href={"/previous-links"} className="w-40 text-center mx-auto sm:mx-0 px-6 py-3 bg-white text-[#667eea] font-semibold rounded-xl shadow-md hover:shadow-lg transition">
+        <Link href={"/previous-links"} onClick={handleNavigation} className="w-40 text-center mx-auto sm:mx-0 px-6 py-3 bg-white text-[#667eea] font-semibold rounded-xl shadow-md hover:shadow-lg transition">
           Previous Links
         </Link>
 
-        <Link href={"/saved-links"} className="w-40 text-center mx-auto sm:mx-0 px-6 py-3 bg-white text-[#667eea] font-semibold rounded-xl shadow-md hover:shadow-lg transition">
+        <Link href={"/saved-links"} onClick={handleNavigation} className="w-40 text-center mx-auto sm:mx-0 px-6 py-3 bg-white text-[#667eea] font-semibold rounded-xl shadow-md hover:shadow-lg transition">
           Saved Links
         </Link>
       </div>
