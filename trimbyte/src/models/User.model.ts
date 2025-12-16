@@ -38,6 +38,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       required: false,
       minlength: 4,
+      select: false,
     },
 
     image: {
