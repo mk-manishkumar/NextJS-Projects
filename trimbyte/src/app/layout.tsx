@@ -20,7 +20,9 @@ export default function RootLayout({
       <body className={"bg-linear-to-br from-[#667eea] to-[#764ba2] min-h-screen flex flex-col"}>
         <Providers>
           <Navbar />
+
           <main className="flex-1 flex flex-col px-5">{children}</main>
+
           <Toaster
             position="top-center"
             toastOptions={{
@@ -31,6 +33,7 @@ export default function RootLayout({
               },
             }}
           />
+
           <Footer />
         </Providers>
       </body>
