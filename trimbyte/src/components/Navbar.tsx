@@ -18,12 +18,12 @@ const Navbar = () => {
       {/* Right side */}
       {!isAuthPage ? (
         // Default Navbar
-        <Link href="/login" className="bg-white text-[#667eea] py-3 px-7 rounded-[25px] font-semibold cursor-pointer shadow-md transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-xl">
+        <Link href="/login" className="bg-white text-[#667eea] py-3 px-7 rounded-[25px] font-semibold cursor-pointer shadow-md transition-all duration-500 ease-in-out hover:bg-black hover:text-white hover:shadow-lg">
           Sign In
         </Link>
       ) : (
         // Auth Page Navbar
-        <Link href="/" className="text-black bg-white font-medium hover:bg-black hover:text-white px-6 py-3 rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-all duration-300 inline-flex items-center gap-2">
+        <Link href="/" className="text-black bg-white font-medium hover:bg-black hover:text-white px-6 py-3 rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.2)] transition-all duration-700 ease-in-out inline-flex items-center gap-2">
           ← Back to Home
         </Link>
       )}
