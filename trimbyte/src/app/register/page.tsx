@@ -6,9 +6,23 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
+type RegisterFormData = {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+};
+
+type RegisterPayload = {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+};
+
 const Register = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({ name: "", username: "", email: "", password: "" });
+  const [formData, setFormData] = useState<RegisterFormData>({ name: "", username: "", email: "", password: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -17,7 +31,7 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const payload = {
+    const payload: RegisterPayload = {
       name: formData.name.trim(),
       username: formData.username.trim(),
       email: formData.email.trim(),
@@ -30,7 +44,7 @@ const Register = () => {
     }
 
     try {
-      await axios.post("/api/auth/register", payload);
+      await axios.post<{ success: boolean }>("/api/auth/register", payload);
       toast.success("Account created successfully!");
       setTimeout(() => {
         router.push("/login");
@@ -66,7 +80,7 @@ const Register = () => {
               <label htmlFor="username" className="block mb-2 font-semibold text-[#333]">
                 Username
               </label>
-              <input id="username" name="username" type="text" placeholder="Enter username" value={formData.username} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required/>
+              <input id="username" name="username" type="text" placeholder="Enter username" value={formData.username} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required />
             </div>
 
             {/* Email */}
@@ -74,7 +88,7 @@ const Register = () => {
               <label htmlFor="email" className="block mb-2 font-semibold text-[#333]">
                 Email
               </label>
-              <input id="email" name="email" type="email" placeholder="Enter email" value={formData.email} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required/>
+              <input id="email" name="email" type="email" placeholder="Enter email" value={formData.email} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required />
             </div>
 
             {/* Password */}
@@ -82,7 +96,7 @@ const Register = () => {
               <label htmlFor="password" className="block mb-2 font-semibold text-[#333]">
                 Password
               </label>
-              <input id="password" name="password" type="password" placeholder="Enter password" value={formData.password} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required/>
+              <input id="password" name="password" type="password" placeholder="Enter password" value={formData.password} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required />
             </div>
 
             {/* Submit */}

@@ -6,9 +6,19 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
+type LoginFormData = {
+  identifier: string;
+  password: string;
+};
+
+type LoginPayload = {
+  identifier: string;
+  password: string;
+};
+
 const Login = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({ identifier: "", password: "" });
+  const [formData, setFormData] = useState<LoginFormData>({ identifier: "", password: "" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -17,15 +27,15 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const payload = { identifier: formData.identifier.trim(), password: formData.password};
+    const payload: LoginPayload = { identifier: formData.identifier.trim(), password: formData.password };
     if (!payload.identifier || !payload.password) {
       toast.error("All fields are required");
       return;
     }
 
     try {
-      await axios.post("/api/auth/login", payload);
-      toast.success("Login successfully!");
+      await axios.post<{ success: boolean }>("/api/auth/login", payload);
+      toast.success("Logged in successfully!");
       setTimeout(() => {
         router.push("/");
       }, 800);
