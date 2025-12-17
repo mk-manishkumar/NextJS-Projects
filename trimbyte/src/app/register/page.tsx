@@ -1,36 +1,98 @@
-import Link from "next/link";
+"use client";
 
-export default function Register() {
+import axios, { AxiosError } from "axios";
+import Link from "next/link";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+
+const Register = () => {
+  const router = useRouter();
+  const [formData, setFormData] = useState({ name: "", username: "", email: "", password: "" });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const payload = {
+      name: formData.name.trim(),
+      username: formData.username.trim(),
+      email: formData.email.trim(),
+      password: formData.password,
+    };
+
+    if (!payload.name || !payload.username || !payload.email || !payload.password) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    try {
+      await axios.post("/api/auth/register", payload);
+      toast.success("Account created successfully!");
+      setTimeout(() => {
+        router.push("/login");
+      }, 800);
+    } catch (error: unknown) {
+      let message = "Something went wrong";
+      if (error instanceof AxiosError) message = error.response?.data?.message || error.message;
+      else if (error instanceof Error) message = error.message;
+      toast.error(message);
+      if (process.env.NODE_ENV === "development") console.error(error);
+    }
+  };
+
   return (
     <div className="p-5">
       <div className="container max-w-[1200px] mx-auto">
-        {/* Register Card */}
         <div className="bg-white rounded-[20px] p-10 shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-w-[650px] mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2.5 text-[#333]">Create Account</h2>
           <p className="hidden sm:block text-center text-[#666] mb-[30px]">Join us and start shortening links</p>
 
-          <div className="mb-5 mt-8 sm:mt-0">
-            <label htmlFor="full name" className="block mb-2 font-semibold text-[#333]">Full Name</label>
-            <input type="text" className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" placeholder="Enter full name" />
-          </div>
+          {/* FORM START */}
+          <form onSubmit={handleSubmit}>
+            {/* Full Name */}
+            <div className="mb-5 mt-8 sm:mt-0">
+              <label htmlFor="name" className="block mb-2 font-semibold text-[#333]">
+                Full Name
+              </label>
+              <input id="name" name="name" type="text" placeholder="Enter full name" value={formData.name} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required />
+            </div>
 
-          <div className="mb-5">
-            <label htmlFor="username" className="block mb-2 font-semibold text-[#333]">Username</label>
-            <input type="text" className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" placeholder="Enter username" />
-          </div>
+            {/* Username */}
+            <div className="mb-5">
+              <label htmlFor="username" className="block mb-2 font-semibold text-[#333]">
+                Username
+              </label>
+              <input id="username" name="username" type="text" placeholder="Enter username" value={formData.username} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required/>
+            </div>
 
-          <div className="mb-5">
-            <label htmlFor="email" className="block mb-2 font-semibold text-[#333]">Email</label>
-            <input type="email" className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" placeholder="Enter email" />
-          </div>
+            {/* Email */}
+            <div className="mb-5">
+              <label htmlFor="email" className="block mb-2 font-semibold text-[#333]">
+                Email
+              </label>
+              <input id="email" name="email" type="email" placeholder="Enter email" value={formData.email} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required/>
+            </div>
 
-          <div className="mb-5">
-            <label htmlFor="password" className="block mb-2 font-semibold text-[#333]">Password</label>
-            <input type="password" className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" placeholder="Enter password" />
-          </div>
+            {/* Password */}
+            <div className="mb-5">
+              <label htmlFor="password" className="block mb-2 font-semibold text-[#333]">
+                Password
+              </label>
+              <input id="password" name="password" type="password" placeholder="Enter password" value={formData.password} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required/>
+            </div>
 
-          <button className="w-full py-3 sm:py-4 px-2 sm:px-10 bg-linear-to-br from-[#667eea] to-[#764ba2] text-white rounded-xl font-semibold text-base hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)] transition-all duration-300 border-none cursor-pointer">Create Account</button>
+            {/* Submit */}
+            <button type="submit" className="w-full py-3 sm:py-4 px-2 sm:px-10 bg-linear-to-br from-[#667eea] to-[#764ba2] text-white rounded-xl font-semibold text-base hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)] transition-all duration-300 border-none cursor-pointer">
+              Create Account
+            </button>
+          </form>
+          {/* FORM END */}
 
+          {/* Google Button */}
           <button type="button" className="w-full py-3 sm:py-4 px-2 sm:px-10 bg-[#EA4335] sm:bg-white text-white sm:text-[#333] rounded-xl font-semibold text-sm sm:text-base hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-300 border-2 border-[#e0e0e0] cursor-pointer mt-3 flex items-center justify-center gap-3">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="hidden sm:inline-block">
               <path d="M17.64 9.20454C17.64 8.56636 17.5827 7.95272 17.4764 7.36363H9V10.845H13.8436C13.635 11.97 13.0009 12.9231 12.0477 13.5613V15.8195H14.9564C16.6582 14.2527 17.64 11.9454 17.64 9.20454Z" fill="#4285F4" />
@@ -41,6 +103,7 @@ export default function Register() {
             Continue with Google
           </button>
 
+          {/* Sign-in link */}
           <div className="text-center mt-5 text-[#666]">
             Already have an account?{" "}
             <Link href="/login" className="text-[#667eea] font-semibold no-underline">
@@ -51,4 +114,6 @@ export default function Register() {
       </div>
     </div>
   );
-}
+};
+
+export default Register;

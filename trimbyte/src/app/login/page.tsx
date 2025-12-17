@@ -1,6 +1,43 @@
-import Link from "next/link";
+"use client";
 
-export default function Login() {
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
+
+const Login = () => {
+  const router = useRouter();
+  const [formData, setFormData] = useState({ identifier: "", password: "" });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const payload = { identifier: formData.identifier.trim(), password: formData.password};
+    if (!payload.identifier || !payload.password) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    try {
+      await axios.post("/api/auth/login", payload);
+      toast.success("Login successfully!");
+      setTimeout(() => {
+        router.push("/");
+      }, 800);
+    } catch (error: unknown) {
+      let message = "Something went wrong";
+      if (error instanceof AxiosError) message = error.response?.data?.message || error.message;
+      else if (error instanceof Error) message = error.message;
+      toast.error(message);
+      if (process.env.NODE_ENV === "development") console.error(error);
+    }
+  };
+
   return (
     <div className="p-5">
       <div className="container max-w-[1200px] mx-auto">
@@ -9,28 +46,37 @@ export default function Login() {
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2.5 text-[#333]">Welcome Back</h2>
           <p className="hidden sm:block text-center text-[#666] mb-[30px]">Sign in to access your account</p>
 
-          <div className="mb-5 mt-8 sm:mt-0">
-            <label htmlFor="email" className="block mb-2 font-semibold text-[#333]">
-              Email
-            </label>
-            <input type="email" className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" placeholder="Enter email or username" />
-          </div>
+          {/* FORM START */}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-5 mt-8 sm:mt-0">
+              <label htmlFor="identifier" className="block mb-2 font-semibold text-[#333]">
+                Email or Username
+              </label>
+              <input id="identifier" name="identifier" type="text" placeholder="Enter email or username" value={formData.identifier} onChange={handleChange} className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" required />
+            </div>
 
-          <div className="mb-5">
-            <label htmlFor="password" className="block mb-2 font-semibold text-[#333]">
-              Password
-            </label>
-            <input type="password" className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" placeholder="Enter password" />
-          </div>
+            <div className="mb-5">
+              <label htmlFor="password" className="block mb-2 font-semibold text-[#333]">
+                Password
+              </label>
+              <input id="password" name="password" value={formData.password} onChange={handleChange} type="password" className="w-full p-[15px] border-2 border-[#e0e0e0] rounded-[10px] text-base focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)] transition-all duration-300" placeholder="Enter password" required />
+            </div>
 
-          <div className="mb-5 text-right">
-            <Link href="/forgot-password" className="text-[#667eea] font-semibold text-sm hover:underline">
-              Forgot Password?
-            </Link>
-          </div>
+            {/* Forgot Password */}
+            <div className="mb-5 text-right">
+              <Link href="/forgot-password" className="text-[#667eea] font-semibold text-sm hover:underline">
+                Forgot Password?
+              </Link>
+            </div>
 
-          <button className="w-full py-3 sm:py-4 px-2 sm:px-10 bg-linear-to-br from-[#667eea] to-[#764ba2] text-white rounded-xl font-semibold text-base hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)] transition-all duration-300 border-none cursor-pointer">Sign In</button>
+            {/* Login Button */}
+            <button type="submit" className="w-full py-3 sm:py-4 px-2 sm:px-10 bg-linear-to-br from-[#667eea] to-[#764ba2] text-white rounded-xl font-semibold text-base hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)] transition-all duration-300 border-none cursor-pointer">
+              Sign In
+            </button>
+          </form>
+          {/* FORM END */}
 
+          {/* Google Button */}
           <button type="button" className="w-full py-3 sm:py-4 px-2 sm:px-10 bg-[#EA4335] sm:bg-white text-white sm:text-[#333] rounded-xl font-semibold text-sm sm:text-base hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(0,0,0,0.1)] transition-all duration-300 border-2 border-[#e0e0e0] cursor-pointer mt-3 flex items-center justify-center gap-3">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="hidden sm:inline-block">
               <path d="M17.64 9.20454C17.64 8.56636 17.5827 7.95272 17.4764 7.36363H9V10.845H13.8436C13.635 11.97 13.0009 12.9231 12.0477 13.5613V15.8195H14.9564C16.6582 14.2527 17.64 11.9454 17.64 9.20454Z" fill="#4285F4" />
@@ -51,4 +97,6 @@ export default function Login() {
       </div>
     </div>
   );
-}
+};
+
+export default Login;
