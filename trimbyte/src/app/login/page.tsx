@@ -3,15 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import axios, { AxiosError } from "axios";
+import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 
 type LoginFormData = {
-  identifier: string;
-  password: string;
-};
-
-type LoginPayload = {
   identifier: string;
   password: string;
 };
@@ -27,25 +22,25 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const payload: LoginPayload = { identifier: formData.identifier.trim(), password: formData.password };
-    if (!payload.identifier || !payload.password) {
+    const identifier = formData.identifier.trim();
+    const password = formData.password;
+
+    if (!identifier || !password) {
       toast.error("All fields are required");
       return;
     }
 
-    try {
-      await axios.post<{ success: boolean }>("/api/auth/login", payload);
-      toast.success("Logged in successfully!");
-      setTimeout(() => {
-        router.push("/");
-      }, 800);
-    } catch (error: unknown) {
-      let message = "Something went wrong";
-      if (error instanceof AxiosError) message = error.response?.data?.message || error.message;
-      else if (error instanceof Error) message = error.message;
-      toast.error(message);
-      if (process.env.NODE_ENV === "development") console.error(error);
+    const result = await signIn("credentials", { redirect: false, identifier, password });
+
+    if (result?.error) {
+      toast.error(result.error);
+      return;
     }
+
+    toast.success("Logged in successfully!");
+    setTimeout(() => {
+      router.push("/");
+    }, 800);
   };
 
   return (
