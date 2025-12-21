@@ -1,8 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const Profile = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
+  const memberSince = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      })
+    : "";
+
   return (
     <div className="min-h-screen bg-linear-to-br from-[#667eea] to-[#764ba2] p-5">
       <div className="container max-w-[1200px] mx-auto">
@@ -14,10 +24,10 @@ const Profile = () => {
 
             {/* Profile Details */}
             <div className="text-center sm:text-left flex-1">
-              <h2 className="text-[28px] sm:text-[32px] mb-1.5 text-[#333] font-bold">John Doe</h2>
-              <p className="text-[#666] text-sm sm:text-base mb-1">@johndoe</p>
-              <p className="text-[#666] text-sm sm:text-base mb-1">john.doe@example.com</p>
-              <p className="text-xs sm:text-sm text-[#999]">Member since January 2024</p>
+              <h2 className="text-[28px] sm:text-[32px] mb-1.5 text-[#333] font-bold">{user?.name}</h2>
+              <p className="text-[#666] text-sm sm:text-base mb-1">{user?.username}</p>
+              <p className="text-[#666] text-sm sm:text-base mb-1">{user?.email}</p>
+              <p className="text-xs sm:text-sm text-[#999]">Member since {memberSince}</p>
             </div>
 
             <Link href="/edit-profile" className="bg-linear-to-br from-[#667eea] to-[#764ba2] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold transition-all duration-300 ease-in-out hover:shadow-[0_5px_15px_rgba(102,126,234,0.4)] hover:-translate-y-0.5 inline-flex items-center gap-2">

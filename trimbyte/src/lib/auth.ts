@@ -38,11 +38,31 @@ export const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
+          username: user.username,
           image: user.image || null,
+          createdAt: user.createdAt.toISOString(),
         };
       },
     }),
   ],
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.username = user.username;
+        token.createdAt = user.createdAt;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      session.user.id = token.id as string;
+      session.user.username = token.username as string;
+      session.user.createdAt = token.createdAt as string;
+      return session;
+    },
+  },
 
   pages: {
     signIn: "/login",
