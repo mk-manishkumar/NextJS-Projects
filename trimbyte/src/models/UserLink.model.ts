@@ -1,15 +1,16 @@
 import { Schema, Document, models, model, Types } from "mongoose";
 
-export interface IUrl extends Document {
+export interface IUserLink extends Document {
   originalUrl: string;
   shortUrl: string;
   slug: string;
   userId: Types.ObjectId;
+  savedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const urlSchema = new Schema<IUrl>(
+const userLinkSchema = new Schema<IUserLink>(
   {
     originalUrl: {
       type: String,
@@ -33,12 +34,19 @@ const urlSchema = new Schema<IUrl>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true, 
+      required: true,
+      index: true,
+    },
+
+    savedAt: {
+      type: Date,
+      required: false,
+      index: true,
     },
   },
   { timestamps: true }
 );
 
-const Url = models.Url || model<IUrl>("Url", urlSchema);
+const UserLink = models.UserLink || model<IUserLink>("UserLink", userLinkSchema);
 
-export default Url;
+export default UserLink;
