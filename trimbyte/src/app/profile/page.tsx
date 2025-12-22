@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 const Profile = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") return null;
+
   const user = session?.user;
+
   const memberSince = user?.createdAt
     ? new Date(user.createdAt).toLocaleDateString("en-US", {
         month: "long",
@@ -13,8 +17,17 @@ const Profile = () => {
       })
     : "";
 
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/" });
+  };
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#667eea] to-[#764ba2] p-5">
+    <div className="bg-linear-to-br from-[#667eea] to-[#764ba2] p-5">
+      {/* temporarily */}
+      <button onClick={handleLogout} className="mb-8 ml-32 bg-white py-2 px-5 cursor-pointer rounded-md">
+        Log Out
+      </button>
+
       <div className="container max-w-[1200px] mx-auto">
         <div className="bg-white rounded-[20px] p-6 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
           {/* Profile Header */}

@@ -12,7 +12,7 @@ const Main = () => {
   const [shortenUrl, setShortenUrl] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
-  const { data: session } = useSession();
+  const { status } = useSession();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,7 +59,7 @@ const Main = () => {
   };
 
   const handleSaveLink = async () => {
-    if (!session) {
+    if (status !== "authenticated") {
       toast("Login to Save Link");
     } else {
       // for future
@@ -70,7 +70,7 @@ const Main = () => {
     const targetHref = e.currentTarget.getAttribute("href");
     e.preventDefault();
 
-    if (!session) {
+    if (status !== "authenticated") {
       toast.error("You must be logged in to access this feature!");
     } else {
       if (targetHref) router.push(targetHref);

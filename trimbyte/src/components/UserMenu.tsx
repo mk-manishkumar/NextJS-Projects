@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 
 const UserMenu = () => {
-  const { data: session } = useSession();
+  const { status } = useSession();
+
+  if (status === "loading") return null;
 
   return (
     <>
-      {session ? (
+      {status === "authenticated" ? (
         <Link href="/profile" className="bg-white text-[#667eea] py-3 px-7 rounded-[25px] font-semibold cursor-pointer shadow-md transition-all duration-500 ease-in-out hover:bg-black hover:text-white hover:shadow-lg">
           Profile
         </Link>
