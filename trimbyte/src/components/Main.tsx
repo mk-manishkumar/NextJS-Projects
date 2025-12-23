@@ -9,8 +9,9 @@ import toast from "react-hot-toast";
 
 const Main = () => {
   const [originalUrl, setOriginalUrl] = useState<string>("");
-  const [shortenUrl, setShortenUrl] = useState<string | null>(null);
+  const [shortenUrl, setShortenUrl] = useState<{ slug: string; shortUrl: string } | null>(null);
   const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>("");
 
   const { status } = useSession();
   const router = useRouter();
@@ -23,21 +24,13 @@ const Main = () => {
 
     try {
       const res = await axios.post("/api/shortener", { url: originalUrl });
-      const shortUrl: string = res.data.shortUrl;
-
-      setShortenUrl(shortUrl);
+      setShortenUrl({ slug: res.data.slug, shortUrl: res.data.shortUrl });
       setOriginalUrl("");
     } catch (error: unknown) {
       let message = "Something went wrong";
-
-      if (error instanceof AxiosError) {
-        message = error.response?.data?.message || error.message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-
+      if (error instanceof AxiosError) message = error.response?.data?.message || error.message;
+      else if (error instanceof Error) message = error.message;
       toast.error(message);
-
       if (process.env.NODE_ENV === "development") console.error(error);
     }
   };
@@ -46,14 +39,12 @@ const Main = () => {
     if (!shortenUrl) return;
 
     try {
-      await navigator.clipboard.writeText(shortenUrl);
+      await navigator.clipboard.writeText(shortenUrl.shortUrl);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to copy";
-
       toast.error(message);
-
       if (process.env.NODE_ENV === "development") console.error(error);
     }
   };
@@ -61,8 +52,27 @@ const Main = () => {
   const handleSaveLink = async () => {
     if (status !== "authenticated") {
       toast("Login to Save Link");
-    } else {
-      // for future
+      return;
+    }
+
+    if (!shortenUrl?.slug) return;
+
+    if (!title.trim()) {
+      toast.error("Please enter a title");
+      return;
+    }
+
+    try {
+      const res = await axios.post("/api/save-link", { slug: shortenUrl.slug, title });
+      toast.success(res.data.message);
+      setTitle("");
+      setShortenUrl(null);
+    } catch (error: unknown) {
+      let message = "Something went wrong";
+      if (error instanceof AxiosError) message = error.response?.data?.message || error.message;
+      else if (error instanceof Error) message = error.message;
+      toast.error(message);
+      if (process.env.NODE_ENV === "development") console.error(error);
     }
   };
 
@@ -89,24 +99,10 @@ const Main = () => {
         {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3.5 mb-8">
           {/* URL Input Field */}
-          <input
-            type="text"
-            className="flex-1 px-[25px] py-[18px] border-2 border-[#e0e0e0] rounded-xl text-[16px] 
-            transition-all duration-300 
-            focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)]"
-            value={originalUrl}
-            onChange={(e) => setOriginalUrl(e.target.value)}
-          />
+          <input type="text" className="flex-1 px-[25px] py-[18px] border-2 border-[#e0e0e0] rounded-xl text-[16px]   transition-all duration-300 focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)]" value={originalUrl} onChange={(e) => setOriginalUrl(e.target.value)} placeholder="Enter your link" required />
 
           {/* Shorten Button */}
-          <button
-            aria-label="Shorten URL"
-            type="submit"
-            className="w-fit mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
-            cursor-pointer transition-transform duration-300 
-            bg-linear-to-br from-[#667eea] to-[#764ba2]
-            hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)]"
-          >
+          <button aria-label="Shorten URL" type="submit" className="w-fit mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl cursor-pointer transition-transform duration-300 bg-linear-to-br from-[#667eea] to-[#764ba2] hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)]">
             Shorten
           </button>
         </form>
@@ -118,17 +114,12 @@ const Main = () => {
               {/* Shortened URL Text */}
               <div className="flex flex-col sm:flex-row gap-3 items-center">
                 <p className="text-gray-500">Your shortened URL:</p>
-                <span className="text-[#667eea] font-bold ml-3">{shortenUrl}</span>
+                <span className="text-[#667eea] font-bold ml-3">{shortenUrl?.shortUrl}</span>
               </div>
 
               {/* Copy Button */}
               <div>
-                <button
-                  aria-label="Copy shortened URL"
-                  className="px-6 py-2 bg-[#667eea] text-white font-semibold rounded-lg 
-                  transition-colors duration-300 hover:bg-[#5568d3] cursor-pointer"
-                  onClick={handleCopy}
-                >
+                <button aria-label="Copy shortened URL" className="px-6 py-2 bg-[#667eea] text-white font-semibold rounded-lg transition-colors duration-300 hover:bg-[#5568d3] cursor-pointer" onClick={handleCopy}>
                   {isCopied ? "Copied!" : "📋Copy"}
                 </button>
               </div>
@@ -136,13 +127,9 @@ const Main = () => {
 
             {/* Save Link Button */}
             <div className="mx-auto">
-              <button
-                onClick={handleSaveLink}
-                className="w-full mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl 
-                cursor-pointer transition-transform duration-300 
-                bg-linear-to-br from-[#667eea] to-[#764ba2]
-                hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)]"
-              >
+              <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="flex-1 mb-8 w-full px-[25px] py-[18px] border-2 border-[#e0e0e0] rounded-xl text-[16px]   transition-all duration-300 focus:outline-none focus:border-[#667eea] focus:shadow-[0_0_0_3px_rgba(102,126,234,0.1)]" placeholder="Enter a title to save this link" required />
+
+              <button onClick={handleSaveLink} className="w-full mx-auto px-10 py-[18px] text-white font-semibold text-[16px] rounded-xl cursor-pointer transition-transform duration-300 bg-linear-to-br from-[#667eea] to-[#764ba2] hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(102,126,234,0.4)]">
                 Save Link
               </button>
             </div>

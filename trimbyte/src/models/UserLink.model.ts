@@ -5,7 +5,8 @@ export interface IUserLink extends Document {
   shortUrl: string;
   slug: string;
   userId: Types.ObjectId;
-  clicks: number; 
+  clicks: number;
+  title?: string;
   savedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -45,6 +46,13 @@ const userLinkSchema = new Schema<IUserLink>(
       required: true,
       default: 0,
       min: 0,
+    },
+
+    title: {
+      type: String,
+      required: false,
+      trim: true,
+      index: true,
     },
 
     savedAt: {
