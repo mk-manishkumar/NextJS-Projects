@@ -28,7 +28,7 @@ export const POST = async (req: NextRequest) => {
     const host = req.headers.get("host") || "localhost:3000";
     const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
 
-    const token = await getToken({ req, secret: process.env.NEXT_AUTH_SECRET });
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
     let slug = "";
     let shortUrl = "";
