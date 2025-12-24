@@ -5,7 +5,6 @@ import UserLink from "@/models/UserLink.model";
 
 export const POST = async (req: NextRequest) => {
   try {
-    // 🔐 Auth check
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
     if (!token?.id) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -17,12 +16,10 @@ export const POST = async (req: NextRequest) => {
 
     await connectDB();
 
-    // 🔎 Ensure link belongs to this user
     const link = await UserLink.findOne({ slug, userId: token.id });
 
     if (!link) return NextResponse.json({ message: "Link not found" }, { status: 404 });
 
-    // 🚫 Check if already saved (by original URL)
     const alreadySaved = await UserLink.findOne({
       userId: token.id,
       originalUrl: link.originalUrl,
@@ -31,7 +28,6 @@ export const POST = async (req: NextRequest) => {
 
     if (alreadySaved) return NextResponse.json({ message: "This link is already saved" }, { status: 409 });
 
-    // ✅ Save the link
     link.title = title.trim();
     link.savedAt = new Date();
 
