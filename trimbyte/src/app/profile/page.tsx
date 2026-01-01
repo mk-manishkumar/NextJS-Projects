@@ -83,8 +83,8 @@ const Profile = () => {
               title: "Documentation Guide",
               url: "https://short.link/docs",
             },
-          ].map((item, idx) => (
-            <div key={idx} className="bg-[#f8f9fa] p-5 rounded-xl mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:translate-x-1.5 transition-all duration-300 hover:shadow-[0_5px_15px_rgba(0,0,0,0.1)]">
+          ].map((item) => (
+            <div key={item.url} className="bg-[#f8f9fa] p-5 rounded-xl mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:translate-x-1.5 transition-all duration-300 hover:shadow-[0_5px_15px_rgba(0,0,0,0.1)]">
               <div className="break-all sm:break-normal">
                 <h3 className="text-[#333] mb-1.5 font-semibold">{item.title}</h3>
                 <p className="text-[#667eea] text-sm">{item.url}</p>
@@ -98,7 +98,7 @@ const Profile = () => {
             </div>
           ))}
 
-          <Link href="/saved" className="w-full p-4 border-2 border-[#667eea] text-[#667eea] rounded-xl font-semibold cursor-pointer transition-all duration-300 mt-5 hover:bg-[#667eea] hover:text-white text-center block">
+          <Link href="/saved-links" className="w-full p-4 border-2 border-[#667eea] text-[#667eea] rounded-xl font-semibold cursor-pointer transition-all duration-300 mt-5 hover:bg-[#667eea] hover:text-white text-center block">
             View All Saved Links →
           </Link>
         </div>
