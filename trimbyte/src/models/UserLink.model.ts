@@ -7,7 +7,7 @@ export interface IUserLink extends Document {
   userId: Types.ObjectId;
   clicks: number;
   title?: string;
-  savedAt?: Date;
+  savedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

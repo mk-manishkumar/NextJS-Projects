@@ -40,7 +40,10 @@ const PreviousLinks = async () => {
                 </div>
 
                 {/* Right side button */}
-                <button className="py-2 px-6 rounded-xl bg-[#667eea] text-white font-semibold shadow-md transition-all duration-300 ease-out hover:bg-[#5568d3] hover:scale-105 hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#667eea]/40 cursor-pointer whitespace-nowrap self-start sm:self-center">Save</button>
+                <button disabled={!!item.savedAt} className={`py-2 px-6 rounded-xl font-semibold shadow-md whitespace-nowrap self-start sm:self-center transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-[#667eea]/40 ${item.savedAt ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-[#667eea] text-white hover:bg-[#5568d3] hover:scale-105 hover:shadow-lg active:scale-95 cursor-pointer"}`}>
+                  {item.savedAt ? "Saved" : "Save"}
+                </button>
+
               </div>
             </div>
           ))}
