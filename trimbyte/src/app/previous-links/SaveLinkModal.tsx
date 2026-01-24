@@ -19,7 +19,7 @@ const SaveLinkModal = ({ linkId, onClose, onSuccess }: Props) => {
     try {
       setLoading(true);
 
-      const res = await axios.post("/api/save-link", {linkId,title: title.trim()});
+      const res = await axios.post("/api/save-link", { linkId, title: title.trim() });
       onSuccess(res.data.savedAt);
     } catch {
       alert("Something went wrong while saving the link.");
@@ -33,7 +33,7 @@ const SaveLinkModal = ({ linkId, onClose, onSuccess }: Props) => {
       <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl">
         <h2 className="text-xl font-bold text-[#333] mb-4">Save this link</h2>
 
-        <input type="text" placeholder="Enter a name for this link" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#667eea]/40"/>
+        <input type="text" placeholder="Enter a name for this link" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#667eea]/40" />
 
         <div className="mt-6 flex justify-end gap-3">
           <button onClick={onClose} className="px-4 py-2 rounded-lg font-medium text-gray-600 hover:bg-gray-100">Cancel</button>
