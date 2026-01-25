@@ -9,9 +9,14 @@ interface Props {
     totalClicks: number;
     savedLinks: number;
   };
+  recentSavedLinks: {
+    _id: string;
+    title: string;
+    shortUrl: string;
+  }[];
 }
 
-const ProfileClient = ({ stats }: Props) => {
+const ProfileClient = ({ stats, recentSavedLinks }: Props) => {
   const { data: session, status } = useSession();
 
   if (status === "loading") return null;
@@ -31,12 +36,7 @@ const ProfileClient = ({ stats }: Props) => {
 
   return (
     <div className="bg-linear-to-br from-[#667eea] to-[#764ba2] p-5">
-      <button
-        onClick={handleLogout}
-        className="mb-8 ml-32 bg-white py-2 px-5 cursor-pointer rounded-md"
-      >
-        Log Out
-      </button>
+      <button onClick={handleLogout} className="mb-8 ml-32 bg-white py-2 px-5 cursor-pointer rounded-md">Log Out</button>
 
       <div className="container max-w-[1200px] mx-auto">
         <div className="bg-white rounded-[20px] p-6 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
@@ -61,10 +61,7 @@ const ProfileClient = ({ stats }: Props) => {
               </p>
             </div>
 
-            <Link
-              href="/edit-profile"
-              className="bg-linear-to-br from-[#667eea] to-[#764ba2] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold transition-all duration-300 ease-in-out hover:shadow-[0_5px_15px_rgba(102,126,234,0.4)] hover:-translate-y-0.5 inline-flex items-center gap-2"
-            >
+            <Link href="/edit-profile" className="bg-linear-to-br from-[#667eea] to-[#764ba2] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold transition-all duration-300 ease-in-out hover:shadow-[0_5px_15px_rgba(102,126,234,0.4)] hover:-translate-y-0.5 inline-flex items-center gap-2">
               <span className="hidden sm:inline">✏️</span>
               <span className="sm:hidden">Edit Profile</span>
             </Link>
@@ -94,12 +91,33 @@ const ProfileClient = ({ stats }: Props) => {
             </div>
           </div>
 
-          <Link
-            href="/saved-links"
-            className="w-full p-4 border-2 border-[#667eea] text-[#667eea] rounded-xl font-semibold cursor-pointer transition-all duration-300 mt-5 hover:bg-[#667eea] hover:text-white text-center block"
-          >
-            View All Saved Links →
-          </Link>
+          {/* Recent Saved Links */}
+          <h3 className="text-[20px] sm:text-[24px] font-bold mb-5 text-[#333]">
+            Recent Saved Links
+          </h3>
+
+          {recentSavedLinks.length === 0 && (
+            <p className="text-[#666] mb-6">
+              You haven’t saved any links yet.
+            </p>
+          )}
+
+          {recentSavedLinks.map((item) => (
+            <div key={item._id} className="bg-[#f8f9fa] p-5 rounded-xl mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:translate-x-1.5 transition-all duration-300 hover:shadow-[0_5px_15px_rgba(0,0,0,0.1)]">
+              <div className="break-all sm:break-normal">
+                <h3 className="text-[#333] mb-1.5 font-semibold">
+                  {item.title}
+                </h3>
+                <p className="text-[#667eea] text-sm">{item.shortUrl}</p>
+              </div>
+
+              <div className="flex gap-2.5">
+                <button type="button" className="w-10 h-10 rounded-lg cursor-pointer transition-all duration-300 text-lg bg-[#667eea] text-white hover:scale-110">📋</button>
+              </div>
+            </div>
+          ))}
+
+          <Link href="/saved-links" className="w-full p-4 border-2 border-[#667eea] text-[#667eea] rounded-xl font-semibold cursor-pointer transition-all duration-300 mt-5 hover:bg-[#667eea] hover:text-white text-center block">View All Saved Links →</Link>
         </div>
       </div>
     </div>

@@ -15,31 +15,25 @@ const ProfilePage = async () => {
 
   const totalLinks = await UserLink.countDocuments({ userId });
 
-  const savedLinks = await UserLink.countDocuments({
-    userId,
-    savedAt: { $ne: null },
-  });
+  const savedLinks = await UserLink.countDocuments({ userId, savedAt: { $ne: null }, });
 
   const clicksAgg = await UserLink.aggregate([
-    { $match: { userId: userId } },
-    {
-      $group: {
-        _id: null,
-        totalClicks: { $sum: "$clicks" },
-      },
-    },
-  ]);
+    { $match: { userId } },
+    { $group: { _id: null, totalClicks: { $sum: "$clicks" }, }, },]);
 
   const totalClicks = clicksAgg[0]?.totalClicks || 0;
 
+  // ✅ Fetch last 3 saved links
+  const recentSavedLinks = await UserLink.find({ userId, savedAt: { $ne: null } }).sort({ savedAt: -1 }).limit(3).select("title shortUrl").lean();
+
+  const serializedRecentSavedLinks = recentSavedLinks.map((link) => ({
+    _id: link._id.toString(),
+    title: link.title!,
+    shortUrl: link.shortUrl,
+  }));
+
   return (
-    <ProfileClient
-      stats={{
-        totalLinks,
-        totalClicks,
-        savedLinks,
-      }}
-    />
+    <ProfileClient stats={{ totalLinks, totalClicks, savedLinks }} recentSavedLinks={serializedRecentSavedLinks} />
   );
 };
 
