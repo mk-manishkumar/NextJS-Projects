@@ -47,22 +47,37 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.username = user.username;
-        token.createdAt = user.createdAt;
-      }
-      return token;
-    },
+  async jwt({ token, user, trigger, session }) {
+    // Initial sign-in
+    if (user) {
+      token.id = user.id;
+      token.name = user.name;
+      token.email = user.email;
+      token.username = user.username;
+      token.createdAt = user.createdAt;
+    }
 
-    async session({ session, token }) {
-      session.user.id = token.id as string;
-      session.user.username = token.username as string;
-      session.user.createdAt = token.createdAt as string;
-      return session;
-    },
+    // ✅ REQUIRED for client-side update()
+    if (trigger === "update" && session) {
+      token.name = session.name;
+      token.email = session.email;
+      token.username = session.username;
+    }
+
+    return token;
   },
+
+  async session({ session, token }) {
+    session.user.id = token.id as string;
+    session.user.name = token.name as string;
+    session.user.email = token.email as string;
+    session.user.username = token.username as string;
+    session.user.createdAt = token.createdAt as string;
+
+    return session;
+  },
+},
+
 
   pages: {
     signIn: "/login",
