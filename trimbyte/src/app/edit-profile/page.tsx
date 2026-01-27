@@ -104,17 +104,6 @@ const EditProfile = () => {
             {showChangePassword && <ChangePassword />}
           </div>
 
-          {/* Delete Account (UI ONLY) */}
-          <div>
-            <button onClick={() => setShowDeleteProfile(!showDeleteProfile)} className="w-full p-4 bg-[#fff5f5] border-2 border-[#ff6b6b] text-[#ff6b6b] rounded-xl font-semibold flex justify-between items-center">
-              <span>Delete Profile</span>
-              <span className={`transition-transform ${showDeleteProfile ? "rotate-180" : ""}`}>▼</span>
-            </button>
-
-            {showChangePassword && <ChangePassword />}
-          </div>
-
-
           {/* Delete Account */}
           <div>
             <button onClick={() => setShowDeleteProfile(!showDeleteProfile)} className="w-full p-4 bg-[#fff5f5] border-2 border-[#ff6b6b] text-[#ff6b6b] rounded-xl font-semibold flex justify-between items-center">
