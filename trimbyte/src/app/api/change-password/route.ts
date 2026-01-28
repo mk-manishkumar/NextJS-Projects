@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Password updated" });
   } catch (error) {
-    console.error("CHANGE PASSWORD ERROR:", error);
+    if (process.env.NODE_ENV === "development") console.error(error);
     return NextResponse.json({ message: "Something went wrong" }, { status: 500 })
   }
 }

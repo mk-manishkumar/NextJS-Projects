@@ -6,6 +6,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import ChangePassword from "@/components/ChangePassword";
+import DeleteAccount from "@/components/DeleteAccount";
 
 const EditProfile = () => {
   const { data: session, status, update } = useSession();
@@ -110,14 +111,7 @@ const EditProfile = () => {
               <span>Delete Profile</span>
               <span className={`transition-transform ${showDeleteProfile ? "rotate-180" : ""}`}>▼</span>
             </button>
-
-            {showDeleteProfile && (
-              <div className="mt-4 p-6 bg-[#fff5f5] rounded-xl border-2 border-[#ff6b6b] opacity-60">
-                <p className="text-sm font-semibold">
-                  ⚠️ Account deletion will be available later.
-                </p>
-              </div>
-            )}
+            {showDeleteProfile && <DeleteAccount />}
           </div>
         </div>
       </div>
